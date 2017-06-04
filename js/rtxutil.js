@@ -13,6 +13,7 @@ class RtxUtil {
 		return {
 			p: NaN,
 			a: 21,
+			b: 23, // RTTTL backwards compatability, not in official spec
 			h: 23,
 			c: 12,
 			d: 14,
