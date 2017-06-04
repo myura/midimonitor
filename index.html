@@ -1,5 +1,8 @@
 <html>
 	<head>
+		<script type="text/javascript" src="js/rtxutil.js" defer></script>
+		<script type="text/javascript" src="js/rtxplayer.js" defer></script>
+		<script type="text/javascript" src="js/rtx.js" defer></script>
 		<style>
 			body {
 				padding: 0;
@@ -21,22 +24,36 @@
 				background-repeat: repeat-y;
 				background-size: 100% 100%;
 				opacity: 1;
+			}
 
-				/*
-				transition-duration: 0.5s;
-				transition-timing-function: linear
-				*/
+			#rtx {
+				z-index: 10;
+				position: absolute;
+
+				top: 50px;
+				left: 50px;
 			}
 		</style>
 		<script>
 			function midiMonitorElement() {
-				elementId = 'midimonitor';
+				var elementId = 'midimonitor';
 				return document.getElementById(elementId)
 			}
 
 			function midiMonitorStyle() {
-				elementId = 'midimonitor';
+				var elementId = 'midimonitor';
 				return document.getElementById(elementId).style
+			}
+
+
+
+			var rtxMessage = {
+				controlCommand: function(name, value) {
+					// do something
+				},
+				toneCommand: function(duration, note, scale, specialDuration) {
+					// do something
+				}
 			}
 
 
@@ -52,31 +69,99 @@
 			function pitch(size) {
 				midiMonitorStyle().backgroundSize = "100% " + size;
 			}
+
 			function velocity(opacity) {
 				midiMonitorStyle().opacity = opacity;
 			}
 
 
+			function heightStyleString(size) {
+				return `background-size: 100% ${size};`
+			}
+			function opacityStyleString(opacity) {
+				return `opacity: ${opacity};`
+			}
+
+
+
+			function note(pitch, velocity) {
+				midiMonitorElement().setAttribute('style', heightStyleString(pitch) + opacityStyleString(velocity))
+			}
+
+
 			tempVar = false;
 			function temp() {
-				random = Math.random() * 2
-				duration(random + 's');
 				if (tempVar) {
-					pitch('30px', '0.2s');
-					velocity(0.8);
+					note('30px', 0.8)
 				}
 				else {
-					pitch('50px', '0.8s');
-					velocity(0.3);
+					note('50px', 0.3)
 				}
 				tempVar = !tempVar;
 			}
 		</script>
-	</head>
-	<body>
-		<canvas id="midimonitor" onclick="temp()"></canvas>
+
+
+
 		<script>
-			temp()
+			var rtxPlayer;
+			function myLoadFunction() {
+				rtxPlayer = new RtxPlayer();
+			}
+			function mySubmitFunction() {
+				event.preventDefault();
+
+				
+				var rtx = new Rtx(event.target.data.value);
+				playStatus = rtxPlayer.playTones(rtx);
+
+				event.target.playstop.setAttribute('func', playStatus ? 'stop' : 'play');
+
+				return false;
+			}
 		</script>
+		<style>
+			#rtx > * {
+				display: block;
+			}
+			#rtx > button[name='playstop'] {
+				background-color: dimgray;
+				border-color: dimgray;
+				color: gray !important;
+			}
+			#rtx > button[name='playstop'][func='play'] > span:nth-of-type(1) {
+				color: lime;
+			}
+			#rtx > button[name='playstop'][func='stop'] > span:nth-of-type(2) {
+				color: red;
+			}
+
+		</style>
+	</head>
+	<body onload='myLoadFunction()'>
+		<canvas id='midimonitor' onclick="temp()">
+			<script>
+				temp()
+			</script>
+		</canvas>
+
+
+
+		<form id='rtx' onsubmit='return mySubmitFunction()'>
+			<button form='rtx' name='playstop' func='play'><span class=>▶</span>/<span>⬛</span></button>
+			<textarea form='rtx' name='data' rows='12' cols='60'>
+YaketySax:
+d=16, o=6, b=120, s=n, l=1:
+8p, 8d#,
+8g#, 8g#, f, d#, h5, c, d#, c, 8f, d#, c, a#5, c,
+8g#5, g#5, a#5, c, d#, f, d#, 8g#, 8p., d#, f, d#,
+8g#, 8g#, f, d#, h5, c, d#, c, 8f, d#, c, a#5, c,
+8d#, d#, d#, g, a#, 8g, 8d#, 8p., d#, f, d#,
+8g#, 8g#, 8g#, 8g#, 8g#, 8g#, f, d#, c, a#5,
+8c#, 8c#, 8c#, 8c#, f, g#, a#, g#, h, 8g#, p,
+c7, h, c7, h, c7, 8d#7., c7, d#7, c7, 8g#, p, 8d#,
+c7, 8g#, d#, 8a#, 8g#., 8p.
+			</textarea>
+		</form>
 	</body>
 </html>
