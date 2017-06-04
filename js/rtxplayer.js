@@ -7,7 +7,7 @@ class RtxPlayer {
 		this.setGain();
 	}
 
-	setGain(gain = 0.005) {
+	setGain(gain = 0.01) {
 		this.gainNode.gain.value = gain;
 	}
 
