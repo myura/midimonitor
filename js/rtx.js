@@ -19,7 +19,7 @@ class RtxTone {
 		return this._note;
 	}
 	set note(note) {
-		this._note = note;				/////////////////////////////////////////////////////////////////////////////////////////////////
+		return this._note = RtxUtil.note(note);
 	}
 
 	get scale() {
@@ -33,7 +33,8 @@ class RtxTone {
 		return this._dot;
 	}
 	set dot(dot) {
-		this._dot = dot;				/////////////////////////////////////////////////////////////////////////////////////////////////
+
+		return this._dot = RtxUtil.dot(dot);
 	}
 
 	get bpm() {
@@ -70,7 +71,6 @@ class RtxTone {
 		return RtxUtil.noteFrequency(this.noteNumber);
 	}
 }
-
 
 class RtxControl {
 	constructor(value) {
@@ -116,17 +116,6 @@ var CONTROL_CLASSES = {
 		}
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 class Rtx {
@@ -176,6 +165,7 @@ class Rtx {
 			return this.controlPair(controlNameStr, controlValueStr);
 		}
 	}
+
 	static controlPair(controlNameStr, controlValueStr) {
 		var controlName = RtxUtil.CONTROL_NAMES[controlNameStr];
 		var controlValue = new CONTROL_CLASSES[controlName](controlValueStr).value;
@@ -207,23 +197,13 @@ class Rtx {
 	}
 
 	static toneCommand(controls, toneDurationStr, toneNoteStr, toneScaleStr, toneDotStr) {
-		var tone = new RtxTone();
+		var duration = toneDurationStr ? toneDurationStr : controls.DURATION;
+		var note = toneNoteStr;
+		var scale = toneScaleStr ? toneScaleStr : controls.SCALE;
+		var dot = toneDotStr;
+		var bpm = controls.BPM;
+		var style = controls.STYLE;
 
-		tone.duration = toneDurationStr ? toneDurationStr : controls.DURATION;
-		tone.note = toneNoteStr;
-		tone.scale = toneScaleStr ? toneScaleStr : controls.SCALE;
-		tone.dot = toneDotStr;
-		tone.bpm = controls.BPM;
-		tone.style = controls.STYLE;
-
-		return tone;
+		return new RtxTone(duration, note, scale, dot, bpm, style);
 	}
-
-
 }
-
-
-
-
-
-

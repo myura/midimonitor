@@ -68,11 +68,19 @@ class RtxUtil {
 		return loops;
 	}
 
+	static note(note) {
+		note = note.charAt(0) in this.NOTE_NUMBER ? (note.substring(1).match(/^#*$/) ? note : 'p') : 'p';
+		return note
+	}
 
+	static dot(dot) {
+		dot = dot.match(/^\.*$/) ? dot : '';
+		return dot;
+	}
 	
 
 	static noteNumber(note) {
-		var noteNumber = Number(this.NOTE_NUMBER[note.charAt(0)] || this.NOTE_NUMBER['p']);
+		var noteNumber = Number(this.NOTE_NUMBER[this.note(note).charAt(0)]);
 		return isNaN(noteNumber) ? noteNumber : noteNumber + (note.split('#').length - 1);
 	}
 
@@ -93,7 +101,7 @@ class RtxUtil {
 	}
 
 	static dotMultiplier(dot) {
-		return 2 - (1 / Math.pow(2, dot.split('.').length - 1));
+		return 2 - (1 / Math.pow(2, this.dot(dot).split('.').length - 1));
 	}
 
 	static durationTime(beats, bpm) {
