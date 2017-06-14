@@ -3,6 +3,10 @@
 		<script type="text/javascript" src="js/rtxutil.js" defer></script>
 		<script type="text/javascript" src="js/rtxplayer.js" defer></script>
 		<script type="text/javascript" src="js/rtx.js" defer></script>
+
+		<script type="text/javascript" src="js/midiutil.js" defer></script>
+		<script type="text/javascript" src="js/midiplayer.js" defer></script>
+		<script type="text/javascript" src="js/midi.js" defer></script>
 		<style>
 			body {
 				padding: 0;
@@ -34,6 +38,16 @@
 				left: 50px;
 			}
 		</style>
+		<script>
+			window.addEventListener('load', function() {
+				var player = new MidiSoundPlayer();
+			});
+		</script>
+
+
+
+
+
 		<script>
 			function midiMonitorElement() {
 				var elementId = 'midimonitor';
