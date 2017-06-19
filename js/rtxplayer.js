@@ -1,5 +1,5 @@
 class RtxPlayer {
-	constructor() {
+	constructor(midiMonitor) {
 		this.audioContext = new window.AudioContext();
 
 		this.gainNode = this.audioContext.createGain();
@@ -11,7 +11,7 @@ class RtxPlayer {
 		this.gainNode.gain.value = gain;
 	}
 
-	playTones(rtx) {
+	playTonesORIG(rtx) {
 		if (this.isPlaying) {
 			this.oscillatorNode.stop();
 			this.isPlaying = false;
@@ -36,5 +36,15 @@ class RtxPlayer {
 		}
 
 		return this.isPlaying;
+	}
+
+	playTones(rtx) {
+		var totalTimeout = 0;
+		for (let rtxLoop = 0; rtxLoop <= rtx.controls.LOOPS; rtxLoop++) {
+			for (let rtxTone of rtx.tones) {
+				setTimeout(note, totalTimeout, rtxTone.noteFrequency);
+				totalTimeout += rtxTone.durationTime * 1000;
+			}
+		}
 	}
 }

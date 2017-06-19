@@ -12,9 +12,21 @@ class MidiUtil {
 		};
 	}
 
-	static combine7bit(msb, lsb) {
-		msb = msb & 0x7f;
-		lsb = lsb & 0x7f;
-		return (msb << 7) + lsb;
+
+	static combineByteValue(msb, lsb) {
+		return (this.byteValue(msb) << 7) + this.byteValue(lsb);
+	}
+
+
+	static isStatusByte(byte) {
+		return Boolean(byte >> 7);
+	}
+
+	static byteMessageType(statusByte) {
+		return statusByte >> 4;
+	}
+
+	static byteValue(valueByte) {
+		return valueByte & 0x7f;
 	}
 }

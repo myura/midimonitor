@@ -1,11 +1,14 @@
 <html>
 	<head>
+		<script type="text/javascript" src="js/midimonitor.js"></script>
+
 		<script type="text/javascript" src="js/rtxutil.js" defer></script>
 		<script type="text/javascript" src="js/rtxplayer.js" defer></script>
 		<script type="text/javascript" src="js/rtx.js" defer></script>
 
 		<script type="text/javascript" src="js/midiutil.js" defer></script>
 		<script type="text/javascript" src="js/midiplayer.js" defer></script>
+		<script type="text/javascript" src="js/midifilereader.js" defer></script>
 		<script type="text/javascript" src="js/midi.js" defer></script>
 		<style>
 			body {
@@ -26,7 +29,7 @@
 					white
 				);
 				background-repeat: repeat-y;
-				background-size: 100% 100%;
+				background-size: 100% 0;
 				opacity: 1;
 			}
 
@@ -40,79 +43,8 @@
 		</style>
 		<script>
 			window.addEventListener('load', function() {
-				var player = new MidiSoundPlayer();
+				var player = new MidiInputter();
 			});
-		</script>
-
-
-
-
-
-		<script>
-			function midiMonitorElement() {
-				var elementId = 'midimonitor';
-				return document.getElementById(elementId)
-			}
-
-			function midiMonitorStyle() {
-				var elementId = 'midimonitor';
-				return document.getElementById(elementId).style
-			}
-
-
-
-			var rtxMessage = {
-				controlCommand: function(name, value) {
-					// do something
-				},
-				toneCommand: function(duration, note, scale, specialDuration) {
-					// do something
-				}
-			}
-
-
-			function screenHeight() {
-				return window.screen.height
-			}
-
-
-			function duration(time) {
-				midiMonitorStyle().transitionDuration = time;
-			}
-
-			function pitch(size) {
-				midiMonitorStyle().backgroundSize = "100% " + size;
-			}
-
-			function velocity(opacity) {
-				midiMonitorStyle().opacity = opacity;
-			}
-
-
-			function heightStyleString(size) {
-				return `background-size: 100% ${size};`
-			}
-			function opacityStyleString(opacity) {
-				return `opacity: ${opacity};`
-			}
-
-
-
-			function note(pitch, velocity) {
-				midiMonitorElement().setAttribute('style', heightStyleString(pitch) + opacityStyleString(velocity))
-			}
-
-
-			tempVar = false;
-			function temp() {
-				if (tempVar) {
-					note('30px', 0.8)
-				}
-				else {
-					note('50px', 0.3)
-				}
-				tempVar = !tempVar;
-			}
 		</script>
 
 
@@ -120,7 +52,7 @@
 		<script>
 			var rtxPlayer;
 			function myLoadFunction() {
-				rtxPlayer = new RtxPlayer();
+				rtxPlayer = new RtxPlayer(midiMonitor);
 			}
 			function mySubmitFunction() {
 				event.preventDefault();
@@ -153,18 +85,13 @@
 		</style>
 	</head>
 	<body onload='myLoadFunction()'>
-		<canvas id='midimonitor' onclick="temp()">
-			<script>
-				temp()
-			</script>
+		<canvas id='midimonitor' onclick="midiMonitor.doit()">
+			<script>var midiMonitor = new MidiMonitor(document.getElementById('midimonitor'));</script>
 		</canvas>
-
-
 
 		<form id='rtx' onsubmit='return mySubmitFunction()'>
 			<button form='rtx' name='playstop' func='play'><span class=>▶</span>/<span>⬛</span></button>
-			<textarea form='rtx' name='data' rows='12' cols='60'>
-YaketySax:
+			<textarea form='rtx' name='data' rows='12' cols='60'>YaketySax:
 d=16, o=6, b=120, s=n, l=1:
 8p, 8d#,
 8g#, 8g#, f, d#, h5, c, d#, c, 8f, d#, c, a#5, c,
@@ -174,8 +101,32 @@ d=16, o=6, b=120, s=n, l=1:
 8g#, 8g#, 8g#, 8g#, 8g#, 8g#, f, d#, c, a#5,
 8c#, 8c#, 8c#, 8c#, f, g#, a#, g#, h, 8g#, p,
 c7, h, c7, h, c7, 8d#7., c7, d#7, c7, 8g#, p, 8d#,
-c7, 8g#, d#, 8a#, 8g#., 8p.
-			</textarea>
+c7, 8g#, d#, 8a#, 8g#., 8p.</textarea>
 		</form>
+		<script>
+			if(FileReader) {
+				function cancelEvent(e) {
+					e.stopPropagation();
+					e.preventDefault();
+					e.dataTransfer.dropEffect = 'link';
+				}
+
+				function dropEvent(e) {
+					cancelEvent(e);
+					for(var i = 0; i < e.dataTransfer.files.length; ++i) {
+						var file = e.dataTransfer.files[i];
+						var reader = new FileReader();
+						reader.onload = function(e) {
+							midiFileReader = new MidiFileReader(e.target.result);
+						};
+						reader.readAsArrayBuffer(file);
+					}
+				}
+
+				document.body.addEventListener('dragenter', cancelEvent, false);
+				document.body.addEventListener('dragover', cancelEvent, false);
+				document.body.addEventListener('drop', dropEvent, false);
+			}
+		</script>
 	</body>
 </html>
