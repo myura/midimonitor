@@ -1,54 +1,23 @@
 <html>
 	<head>
 		<script type="text/javascript" src="js/midimonitor.js"></script>
+		<link rel="stylesheet" href="css/midimonitor.css">
 
 		<script type="text/javascript" src="js/rtxutil.js" defer></script>
 		<script type="text/javascript" src="js/rtxplayer.js" defer></script>
 		<script type="text/javascript" src="js/rtx.js" defer></script>
+		<link rel="stylesheet" href="css/rtx.css">
 
 		<script type="text/javascript" src="js/midiutil.js" defer></script>
 		<script type="text/javascript" src="js/midiplayer.js" defer></script>
 		<script type="text/javascript" src="js/midifilereader.js" defer></script>
 		<script type="text/javascript" src="js/midi.js" defer></script>
-		<style>
-			body {
-				padding: 0;
-				border: 0;
-				margin: 0;
-				background-color: black;
-			}
-			#midimonitor {
-				width: 100%;
-				height: 100%;
 
-				background-image: linear-gradient(
-					to bottom,
-					black,
-					black 50%,
-					white 50%,
-					white
-				);
-				background-repeat: repeat-y;
-				background-size: 100% 0;
-				opacity: 1;
-			}
-
-			#rtx {
-				z-index: 10;
-				position: absolute;
-
-				top: 50px;
-				left: 50px;
-			}
-		</style>
 		<script>
 			window.addEventListener('load', function() {
 				var player = new MidiInputter();
 			});
 		</script>
-
-
-
 		<script>
 			var rtxPlayer;
 			function myLoadFunction() {
@@ -58,7 +27,6 @@
 			function mySubmitFunction() {
 				event.preventDefault();
 
-				
 				var rtx = new Rtx(event.target.data.value);
 				playStatus = rtxPlayer.playTones(rtx);
 
@@ -67,33 +35,16 @@
 				return false;
 			}
 		</script>
-		<style>
-			#rtx > * {
-				display: block;
-			}
-			#rtx > button[name='playstop'] {
-				background-color: dimgray;
-				border-color: dimgray;
-				color: gray !important;
-			}
-			#rtx > button[name='playstop'][func='play'] > span:nth-of-type(1) {
-				color: lime;
-			}
-			#rtx > button[name='playstop'][func='stop'] > span:nth-of-type(2) {
-				color: red;
-			}
-
-		</style>
 	</head>
 	<body onload='myLoadFunction()'>
-		<canvas id='midimonitor' onclick="midiMonitor.doit()">
-			<script>var midiMonitor = new MidiMonitor(document.getElementById('midimonitor'));</script>
+		<canvas id='midimonitor'>
+			<script>var midiMonitor = new MidiMonitor(this.document.getElementById('midimonitor'));</script>
 		</canvas>
 
 		<form id='rtx' onsubmit='return mySubmitFunction()'>
 			<button form='rtx' name='playstop' func='play'><span class=>▶</span>/<span>⬛</span></button>
 			<textarea form='rtx' name='data' rows='12' cols='60'>YaketySax:
-d=16, o=6, b=120, s=n, l=1:
+d=16, o=6, b=120, s=c, l=1:
 8p, 8d#,
 8g#, 8g#, f, d#, h5, c, d#, c, 8f, d#, c, a#5, c,
 8g#5, g#5, a#5, c, d#, f, d#, 8g#, 8p., d#, f, d#,

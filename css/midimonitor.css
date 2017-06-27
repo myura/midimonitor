@@ -1,0 +1,29 @@
+body {
+	padding: 0;
+	border: 0;
+	margin: 0;
+	background-color: black;
+}
+#midimonitor {
+	width: 100%;
+	height: 100%;
+
+	background-image: linear-gradient(
+		to bottom,
+		black,
+		black 50%,
+		white 50%,
+		white
+	);
+	background-repeat: repeat-y;
+	background-size: 100% 0;
+	opacity: 1;
+}
+
+#rtx {
+	z-index: 10;
+	position: absolute;
+
+	top: 50px;
+	left: 50px;
+}
