@@ -10,41 +10,57 @@
 
 		<script type="text/javascript" src="js/midiutil.js" defer></script>
 		<script type="text/javascript" src="js/midiplayer.js" defer></script>
+		<script type="text/javascript" src="js/midiinputter.js" defer></script>
 		<script type="text/javascript" src="js/midifilereader.js" defer></script>
 		<script type="text/javascript" src="js/midi.js" defer></script>
 
 		<script>
-			window.addEventListener('load', function() {
-				var player = new MidiInputter();
-			});
+			
 		</script>
 		<script>
 			var rtxPlayer;
-			function myLoadFunction() {
-				//rtxPlayer = new RtxSoundPlayer(midiMonitor);
-				rtxPlayer = new RtxMonitorPlayer(midiMonitor);
-			}
 			function mySubmitFunction() {
 				event.preventDefault();
+				
+				var rtxType = event.target.type.options[event.target.type.selectedIndex].value;
+				
+				if (!rtxPlayer) {
+					if (rtxType == 'monitor') {
+						rtxPlayer = new RtxMonitorPlayer(midiMonitor);
+					} else {
+						rtxPlayer = new RtxSoundPlayer(midiMonitor);
+					}
+				}
 
 				var rtx = new Rtx(event.target.data.value);
 				playStatus = rtxPlayer.playTones(rtx);
 
-				event.target.playstop.setAttribute('func', playStatus ? 'stop' : 'play');
+				event.target.setAttribute('func', playStatus ? 'stop' : 'play');
 
 				return false;
 			}
 		</script>
 	</head>
-	<body onload='myLoadFunction()'>
+	<body>
 		<canvas id='midimonitor'>
-			<script>var midiMonitor = new MidiMonitor(this.document.getElementById('midimonitor'));</script>
+			<script>
+				var midiMonitor = new MidiMonitor(this.document.getElementById('midimonitor'));
+				window.addEventListener('load', function() {
+					var player = new MidiDirectInputter(midiMonitor);
+				});
+			</script>
 		</canvas>
 
-		<form id='rtx' onsubmit='return mySubmitFunction()'>
-			<button form='rtx' name='playstop' func='play'><span class=>▶</span>/<span>⬛</span></button>
+		<form id='rtx' func='play' onsubmit='return mySubmitFunction()'>
+			<div>
+				<button form='rtx' name='playstop'><span class=play>▶</span>/<span class=stop>⬛</span></button>
+				<select name='type'>
+					<option value='monitor'>Monitor</option>
+					<option value='sound'>Sound</option>
+				</select>
+			</div>
 			<textarea form='rtx' name='data' rows='12' cols='60'>YaketySax:
-d=16, o=6, b=120, s=c, l=1:
+d=16, o=6, b=120, s=n, l=1:
 8p, 8d#,
 8g#, 8g#, f, d#, h5, c, d#, c, 8f, d#, c, a#5, c,
 8g#5, g#5, a#5, c, d#, f, d#, 8g#, 8p., d#, f, d#,
