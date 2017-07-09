@@ -29,4 +29,8 @@ class MidiUtil {
 	static byteValue(valueByte) {
 		return valueByte & 0x7f;
 	}
+
+	static noteFrequency(noteNumber, referenceFrequency = 440, referenceNumber = 69) {
+		return isNaN(noteNumber) ? 0 : Math.pow(2, (noteNumber - referenceNumber) / 12) * referenceFrequency;
+	}
 }

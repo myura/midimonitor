@@ -1,4 +1,8 @@
 class RtxPlayer {
+	constructor(midiMonitor) {
+		this.isPlaying = false;
+	}
+
 	setGain(gain = 1) {
 		this._setGain(Math.max(Math.min(gain, 1), 0));
 	}
@@ -7,10 +11,21 @@ class RtxPlayer {
 	}
 
 	playTones(rtx) {
-		return(this._playTones(rtx));
+		if (this.isPlaying) {
+			this._stopTones(rtx)
+			this.isPlaying = false;
+		} else {
+			this._playTones(rtx);
+			this.isPlaying = true;
+		}
+		return this.isPlaying;
 	}
 	_playTones(rtx) {
 		console.warn("TO IMPLEMENT: " + "_playTones");
+	}
+
+	_stopTones() {
+		console.warn("TO IMPLEMENT: " + "_stopTones");
 	}
 }
 
@@ -29,29 +44,26 @@ class RtxSoundPlayer extends RtxPlayer {
 	}
 
 	_playTones(rtx) {
-		if (this.isPlaying) {
-			this.oscillatorNode.stop();
-			this.isPlaying = false;
-		}
-		else {
-			this.oscillatorNode = this.audioContext.createOscillator();
-			this.oscillatorNode.type = 'square';
-			this.oscillatorNode.frequency.value = 0;
-			this.oscillatorNode.connect(this.gainNode);
+		this.oscillatorNode = this.audioContext.createOscillator();
+		this.oscillatorNode.type = 'square';
+		this.oscillatorNode.frequency.value = 0;
+		this.oscillatorNode.connect(this.gainNode);
 
-			var relativeTime = this.audioContext.currentTime;
-			for (let rtxLoop = 0; rtxLoop <= rtx.controls.LOOPS; rtxLoop++) {
-				for (let rtxTone of rtx.tones) {
-					this.oscillatorNode.frequency.setValueAtTime(rtxTone.noteFrequency, relativeTime);
-					this.oscillatorNode.frequency.setValueAtTime(0, relativeTime + rtxTone.durationStyleTime);
-					relativeTime += rtxTone.durationTime;
-				}
+		var relativeTime = this.audioContext.currentTime;
+		for (let rtxLoop = 0; rtxLoop <= rtx.controls.LOOPS; rtxLoop++) {
+			for (let rtxTone of rtx.tones) {
+				this.oscillatorNode.frequency.setValueAtTime(rtxTone.noteFrequency, relativeTime);
+				this.oscillatorNode.frequency.setValueAtTime(0, relativeTime + rtxTone.durationStyleTime);
+				relativeTime += rtxTone.durationTime;
 			}
-			this.oscillatorNode.start();
-			this.oscillatorNode.stop(relativeTime);
-			this.isPlaying = true;
 		}
-		return(this.isPlaying);
+		this.oscillatorNode.start();
+		this.oscillatorNode.stop(relativeTime);
+		this.isPlaying = true;
+	}
+
+	_stopTones() {
+		this.oscillatorNode.stop();
 	}
 }
 
@@ -59,6 +71,7 @@ class RtxMonitorPlayer extends RtxPlayer {
 	constructor(midiMonitor) {
 		super();
 		this.midiMonitor = midiMonitor;
+		this.timeoutIds = [];
 	}
 
 	_setGain(gain) {
@@ -69,14 +82,22 @@ class RtxMonitorPlayer extends RtxPlayer {
 		var totalTimeout = 0;
 		for (let rtxLoop = 0; rtxLoop <= rtx.controls.LOOPS; rtxLoop++) {
 			for (let rtxTone of rtx.tones) {
-				setTimeout(function(frequency) {
+				this.timeoutIds.push(window.setTimeout(function(frequency) {
 					this.midiMonitor.setFrequency(frequency);
-				}, totalTimeout, rtxTone.noteFrequency);
-				setTimeout(function(frequency) {
+				}, totalTimeout, rtxTone.noteFrequency));
+				this.timeoutIds.push(window.setTimeout(function(frequency) {
 					this.midiMonitor.setFrequency(frequency);
-				}, totalTimeout + (rtxTone.durationStyleTime * 1000), 0);
+				}, totalTimeout + (rtxTone.durationStyleTime * 1000), 0));
 				totalTimeout += rtxTone.durationTime * 1000;
 			}
 		}
+	}
+
+	_stopTones() {
+		this.timeoutIds.forEach(function(item) {
+			 window.clearTimeout(item);
+		});
+		this.timeoutIds = [];
+		this.midiMonitor.setFrequency(0);
 	}
 }

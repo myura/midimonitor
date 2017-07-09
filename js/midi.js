@@ -151,12 +151,6 @@ class MidiChannel {
 	}
 
 	process(message) {
-
-
-		//console.groupCollapsed(message.status.type);
-		//console.log(message.data);
-		//console.groupEnd();
-
 		switch(message.status.type) {
 			case 'NoteOff':
 				this.player.removeNote(message.data.tone, message.data.velocity);

@@ -1,14 +1,26 @@
 #rtx > * {
 	display: block;
 }
-#rtx > button[name='playstop'] {
+#rtx button[name='playstop'] {
 	background-color: dimgray;
 	border-color: dimgray;
-	color: gray !important;
+	color: black;
 }
-#rtx > button[name='playstop'][func='play'] > span:nth-of-type(1) {
+
+#rtx button[name='playstop'] span {
+	color: gray;
+}
+
+
+#rtx[func='play'] button[name='playstop'] span.play {
 	color: lime;
 }
-#rtx > button[name='playstop'][func='stop'] > span:nth-of-type(2) {
+#rtx[func='stop'] button[name='playstop'] span.stop {
 	color: red;
 }
+
+/*
+#rtx[func='stop'] select[name='type'] {
+	background-color: black;
+}
+*/
