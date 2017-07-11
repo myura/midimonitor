@@ -31,6 +31,16 @@ class MidiUtil {
 	}
 
 	static noteFrequency(noteNumber, referenceFrequency = 440, referenceNumber = 69) {
-		return isNaN(noteNumber) ? 0 : Math.pow(2, (noteNumber - referenceNumber) / 12) * referenceFrequency;
+		var noteOffset = 12;
+		return isNaN(noteNumber) ? 0 : Math.pow(2, (noteNumber + noteOffset - referenceNumber) / 12) * referenceFrequency;
+	}
+
+	static bendPercent(bendNumber, bendMin = 0, bendMax = 16383, bendMid = 8192) {
+		if(bendNumber > bendMid) {
+			return bendNumber / (bendMax - bendMid);
+		} else if(bendNumber < bendMid) {
+			return -1 + (bendNumber / (bendMid - bendMin));
+		}
+		return 0;
 	}
 }

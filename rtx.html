@@ -1,0 +1,57 @@
+<html>
+	<head>
+		<script type="text/javascript" src="js/midimonitor.js"></script>
+		<link rel="stylesheet" href="css/midimonitor.css">
+
+		<script type="text/javascript" src="js/rtxutil.js" defer></script>
+		<script type="text/javascript" src="js/rtxplayer.js" defer></script>
+		<script type="text/javascript" src="js/rtx.js" defer></script>
+		<link rel="stylesheet" href="css/rtx.css">
+		<script>
+			var rtxPlayer;
+			function mySubmitFunction() {
+				event.preventDefault();
+				var rtxType = event.target.type.options[event.target.type.selectedIndex].value;
+				if (!rtxPlayer) {
+					if (rtxType == 'monitor') {
+						rtxPlayer = new RtxMonitorPlayer(midiMonitor);
+					} else {
+						rtxPlayer = new RtxSoundPlayer(midiMonitor);
+					}
+				}
+				var rtx = new Rtx(event.target.data.value);
+				playStatus = rtxPlayer.playTones(rtx);
+				event.target.setAttribute('func', playStatus ? 'stop' : 'play');
+				return false;
+			}
+		</script>
+	</head>
+	<body>
+		<canvas id='midimonitor'>
+			<script>
+					var midiMonitor = new MidiMonitor(this.document.getElementById('midimonitor'));
+				</script>
+		</canvas>
+
+		<form id='rtx' func='play' onsubmit='return mySubmitFunction()'>
+			<div>
+				<button form='rtx' name='playstop'><span class=play>▶</span>/<span class=stop>⬛</span></button>
+				<select name='type'>
+					<option value='monitor'>Monitor</option>
+					<option value='sound'>Sound</option>
+				</select>
+			</div>
+			<textarea form='rtx' name='data' rows='12' cols='60'>YaketySax:
+d=16, o=6, b=120, s=n, l=1:
+8p, 8d#,
+8g#, 8g#, f, d#, h5, c, d#, c, 8f, d#, c, a#5, c,
+8g#5, g#5, a#5, c, d#, f, d#, 8g#, 8p., d#, f, d#,
+8g#, 8g#, f, d#, h5, c, d#, c, 8f, d#, c, a#5, c,
+8d#, d#, d#, g, a#, 8g, 8d#, 8p., d#, f, d#,
+8g#, 8g#, 8g#, 8g#, 8g#, 8g#, f, d#, c, a#5,
+8c#, 8c#, 8c#, 8c#, f, g#, a#, g#, h, 8g#, p,
+c7, h, c7, h, c7, 8d#7., c7, d#7, c7, 8g#, p, 8d#,
+c7, 8g#, d#, 8a#, 8g#., 8p.</textarea>
+		</form>
+	</body>
+</html>

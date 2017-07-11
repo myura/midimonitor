@@ -1,0 +1,46 @@
+<html>
+	<head>
+		<script type="text/javascript" src="js/midimonitor.js"></script>
+		<link rel="stylesheet" href="css/midimonitor.css">
+
+		<script type="text/javascript" src="js/midiutil.js" defer></script>
+		<script type="text/javascript" src="js/midiplayer.js" defer></script>
+		<script type="text/javascript" src="js/midiinputter.js" defer></script>
+		<script type="text/javascript" src="js/midifilereader.js" defer></script>
+		<script type="text/javascript" src="js/midi.js" defer></script>
+	</head>
+	<body>
+		<canvas id='midimonitor'>
+			<script>
+				var midiMonitor = new MidiMonitor(this.document.getElementById('midimonitor'));
+				window.addEventListener('load', function() {
+					var player = new MidiDirectInputter(midiMonitor);
+				});
+			</script>
+		</canvas>
+		<script>
+			if(FileReader) {
+				function cancelEvent(e) {
+					e.stopPropagation();
+					e.preventDefault();
+					e.dataTransfer.dropEffect = 'link';
+				}
+
+				function dropEvent(e) {
+					cancelEvent(e);
+					for(var i = 0; i < e.dataTransfer.files.length; ++i) {
+						var file = e.dataTransfer.files[i];
+						var reader = new FileReader();
+						reader.onload = function(e) {
+							midiFileReader = new MidiFileReader(e.target.result);
+						};
+						reader.readAsArrayBuffer(file);
+					}
+				}
+				document.body.addEventListener('dragenter', cancelEvent, false);
+				document.body.addEventListener('dragover', cancelEvent, false);
+				document.body.addEventListener('drop', dropEvent, false);
+			}
+		</script>
+	</body>
+</html>

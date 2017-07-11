@@ -158,6 +158,9 @@ class MidiChannel {
 			case 'NoteOn':
 				this.player.addNote(message.data.tone, message.data.velocity);
 				break;
+			case 'PitchBend':
+				var bend = MidiUtil.bendPercent(message.data.bend);
+				this.player.changeBend(bend);
 		}
 	}
 }
