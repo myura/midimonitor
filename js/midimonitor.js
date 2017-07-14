@@ -23,7 +23,8 @@ class MidiMonitor {
 		this.canvas = canvas;
 
 		//var derp = 'linear-gradient(to bottom, black, black 50%, white 50%, white)';
-		this.canvas.style.backgroundImage = Array(16).fill('linear-gradient(to bottom, black, black 50%, white 50%, white)').join(',');
+		//this.canvas.style.backgroundImage = Array(16).fill('linear-gradient(to bottom, black, black 50%, white 50%, white)').join(',');
+		//this.canvas.style.backgroundImage = Array(16).fill('linear-gradient(to bottom, hsla(0,0,0,1), hsla(0,0,0,1) 50%, hsla(0,0,,0) 50%, hsla(0,0,0,0))').join(',');
 	}
 
 	setFrequency(frequency) {
@@ -40,18 +41,30 @@ class MidiMonitor {
 
 	setTones(tones) {
 		var backgroundSizeArray = [];
-		var backgroundPositionArray = [];
+		var backgroundImageArray = [];
 
 		var length = Object.keys(tones).length
-		var percent = 100 / length;
-		let i = 1;
+		var percent = 1 / length;
 
 		for (let toneNumber in tones) {
-			backgroundSizeArray.push('' + (i * percent) + '% ' + MidiMonitor.frequency2Pixels(tones[toneNumber].frequency) + 'px');
-			i++;
+			backgroundSizeArray.push(MidiMonitor.toneBackgroundSize(tones[toneNumber]));
+			backgroundImageArray.push(MidiMonitor.toneBackgroundImage(percent));
 		}
 		this.canvas.style.backgroundSize = backgroundSizeArray.join(',');
+		this.canvas.style.backgroundImage = backgroundImageArray.join(',');
 	}
+
+
+	static toneBackgroundSize(tone, widthPercent = 1) {
+		return '' + (widthPercent * 100) + '% ' + MidiMonitor.frequency2Pixels(tone.frequency) + 'px';
+	}
+
+	static toneBackgroundImage(alpha = 1) {
+		var black = 'hsla(0, 0%, 0%, ' + alpha + ')';
+		var white = 'hsla(0, 0%, 100%, ' + alpha + ')';
+		return 'linear-gradient(to bottom, ' + black + ', ' + black + ' 50%, ' + white + ' 50%, ' + white + ')';
+	}
+
 }
 
 class MidiMonitorMaster {
