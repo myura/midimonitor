@@ -21,10 +21,6 @@ class MidiMonitor {
 
 	constructor(canvas) {
 		this.canvas = canvas;
-
-		//var derp = 'linear-gradient(to bottom, black, black 50%, white 50%, white)';
-		//this.canvas.style.backgroundImage = Array(16).fill('linear-gradient(to bottom, black, black 50%, white 50%, white)').join(',');
-		//this.canvas.style.backgroundImage = Array(16).fill('linear-gradient(to bottom, hsla(0,0,0,1), hsla(0,0,0,1) 50%, hsla(0,0,,0) 50%, hsla(0,0,0,0))').join(',');
 	}
 
 	setFrequency(frequency) {
