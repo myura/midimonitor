@@ -1,4 +1,8 @@
 class MidiUtil {
+	static noteOffset() {
+		return 12;
+	}
+
 	static get MESSAGE_TYPES() {
 		return {
 			0x8: 'NoteOff',
@@ -30,9 +34,9 @@ class MidiUtil {
 		return valueByte & 0x7f;
 	}
 
-	static noteFrequency(noteNumber, referenceFrequency = 440, referenceNumber = 69) {
-		var noteOffset = 12;
-		return isNaN(noteNumber) ? 0 : Math.pow(2, (noteNumber + noteOffset - referenceNumber) / 12) * referenceFrequency;
+	static noteFrequency(noteNumber, bendPercent = 0, bendScale = MidiUtil.bendScale(), referenceFrequency = 440, referenceNumber = 69) {
+		noteNumber += bendPercent * bendScale;
+		return isNaN(noteNumber) ? 0 : Math.pow(2, (noteNumber + MidiUtil.noteOffset() - referenceNumber) / 12) * referenceFrequency;
 	}
 
 	static bendPercent(bendNumber, bendMin = 0, bendMax = 16383, bendMid = 8192) {
@@ -42,5 +46,9 @@ class MidiUtil {
 			return -1 + (bendNumber / (bendMid - bendMin));
 		}
 		return 0;
+	}
+
+	static bendScale() {
+		return 12;
 	}
 }

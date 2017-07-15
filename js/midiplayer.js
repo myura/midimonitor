@@ -30,7 +30,7 @@ class MidiTone {
 	changeBend(bendPercent) {
 		this._changeBend(bendPercent);
 	}
-	_changeBend(bendPercent) {
+	_changeBend(bendPercent, scale) {
 		console.warn("TO IMPLEMENT: " + "_changeBend");
 	}
 }
@@ -66,7 +66,7 @@ class MidiSoundTone extends MidiTone {
 	}
 
 	_changeBend(bendPercent) {
-		this.oscillatorNode.detune.value = bendPercent * 200;
+		this.oscillatorNode.detune.value = (bendPercent * MidiUtil.bendScale()) * 100;
 	}
 }
 
@@ -82,17 +82,17 @@ class MidiMonitorTone extends MidiTone {
 
 	_playTone(toneNumber, bendPercent) {
 		this.toneNumber = toneNumber;
-		this.frequency = MidiUtil.noteFrequency(this.toneNumber + (bendPercent * 2));
-		//this.midiMonitor.setFrequency(MidiUtil.noteFrequency(toneNumber));
 
+		this.frequency = MidiUtil.noteFrequency(this.toneNumber, bendPercent, MidiUtil.bendScale());
+		//this.midiMonitor.setFrequency(MidiUtil.noteFrequency(toneNumber));
 	}
 
 	_stopTone() {
 		this.playTone(0);
 	}
 
-	_changeBend(bendPercent) {
-		this.frequency = MidiUtil.noteFrequency(this.toneNumber + (bendPercent * 2));
+	_changeBend(bendPercent, scale) {
+		this.frequency = MidiUtil.noteFrequency(this.toneNumber, bendPercent, MidiUtil.bendScale());
 	}
 }
 
@@ -101,12 +101,13 @@ class MidiMonitorTone extends MidiTone {
 class MidiPlayer {
 	constructor(midiMonitor) {
 		this.midiMonitor = midiMonitor;
+		this.bendPercent = 0;
 	}
 
 	addNote(tone, velocity) {
-		this._addNote(tone, velocity);
+		this._addNote(tone, velocity, this.bendPercent);
 	}
-	_addNote(tone, velocity) {
+	_addNote(tone, velocity, bendPercent) {
 		console.warn("TO IMPLEMENT: " + "_addNote");
 	}
 
@@ -132,7 +133,8 @@ class MidiPlayer {
 	}
 
 	changeBend(bendPercent) {
-		this._changeBend(bendPercent);
+		this.bendPercent = bendPercent;
+		this._changeBend(this.bendPercent);
 	}
 	_changeBend(bendPercent) {
 		console.warn("TO IMPLEMENT: " + "_changeBend");
@@ -146,10 +148,10 @@ class MidiSoundPlayer extends MidiPlayer {
 		this.audioContext = new window.AudioContext();
 	}
 
-	_addNote(tone, velocity) {
+	_addNote(tone, velocity, bendPercent) {
 		this.soundTones[tone] = new MidiSoundTone(this.audioContext);
 		this.soundTones[tone].setVelocity(velocity);
-		this.soundTones[tone].playTone(tone);
+		this.soundTones[tone].playTone(tone, bendPercent);
 	}
 
 	_removeNote(tone, velocity) {
@@ -170,10 +172,10 @@ class MidiMonitorPlayer extends MidiPlayer {
 		this.monitorTones = {};
 	}
 
-	_addNote(tone, velocity) {
+	_addNote(tone, velocity, bendPercent) {
 		this.monitorTones[tone] = new MidiMonitorTone(this.midiMonitor);
 		this.monitorTones[tone].setVelocity(velocity);
-		this.monitorTones[tone].playTone(tone);
+		this.monitorTones[tone].playTone(tone, bendPercent);
 
 		this.midiMonitor.setTones(this.monitorTones);
 	}
@@ -186,8 +188,9 @@ class MidiMonitorPlayer extends MidiPlayer {
 	}
 
 	_changeBend(bendPercent) {
-		for(let toneNum in this.soundTones) {
+		for(let toneNum in this.monitorTones) {
 			this.monitorTones[toneNum].changeBend(bendPercent);
 		}
+		this.midiMonitor.setTones(this.monitorTones);
 	}
 }
