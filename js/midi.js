@@ -45,15 +45,16 @@ class MidiBend {
 
 
 class MidiMessage {
-	constructor(dataBytes, status = null) {
-		if(MidiUtil.isStatusByte(dataBytes[0])) {
-			status = new MessageStatus(dataBytes[0]);
-			dataBytes = dataBytes.subarray(1);
+	constructor(byteValues, status = null) {
+		var byte0 = byteValues.next().value;
+		if(MidiUtil.isStatusByte(byte0)) {
+			status = new MessageStatus(byte0);
+			byte0 = null;
 		} else if (status == null) {
 			console.error("Status not initialized");
 		}
 		this.status = status;
-		this.data = new MESSAGE_DATA_CLASSES[this.status.type](dataBytes);
+		this.data = new MESSAGE_DATA_CLASSES[this.status.type](byteValues, byte0);
 	}
 }
 
@@ -70,8 +71,21 @@ class MessageStatus {
 }
 
 class MessageData {
-	constructor(dataBytes) {
+	constructor(byteValues, byte0 = null) {
+		var dataBytes = [];
+		for(let i = 0; i < this.messageLength(); i++) {
+			if(byte0) {
+				dataBytes[i] = byte0;
+				byte0 = null;
+			}
+			else {
+				dataBytes[i] = byteValues.next().value;
+			}
+		}
 		this.parseData(dataBytes);
+	}
+	messageLength() {
+		return 0;
 	}
 	parseData(dataBytes) {
 		console.log("UNDEFINED MESSAGE");
@@ -82,6 +96,9 @@ var MESSAGE_DATA_CLASSES = {
 	undefined: class extends MessageData {
 	},
 	NoteOff: class extends MessageData {
+		messageLength() {
+			return 2;
+		}
 		parseData(dataBytes) {
 			this.tone = dataBytes[0];
 			this.velocity = dataBytes[1];
@@ -92,11 +109,17 @@ var MESSAGE_DATA_CLASSES = {
 			this.tone = dataBytes[0];
 			this.velocity = dataBytes[1];
 		}
+		messageLength() {
+			return 2;
+		}
 	},
 	KeyPressure: class extends MessageData {
 		parseData(dataBytes) {
 			this.tone = dataBytes[0];
 			this.pressure = dataBytes[1];
+		}
+		messageLength() {
+			return 2;
 		}
 	},
 	ControlChange: class extends MessageData {
@@ -104,20 +127,32 @@ var MESSAGE_DATA_CLASSES = {
 			this.controller = dataBytes[0];
 			this.value = dataBytes[1];
 		}
+		messageLength() {
+			return 2;
+		}
 	},
 	ProgramChange: class extends MessageData {
 		parseData(dataBytes) {
 			this.value = dataBytes[0];
+		}
+		messageLength() {
+			return 1;
 		}
 	},
 	ChannelPressure: class extends MessageData {
 		parseData(dataBytes) {
 			this.pressure = dataBytes[0];
 		}
+		messageLength() {
+			return 1;
+		}
 	},
 	PitchBend: class extends MessageData {
 		parseData(dataBytes) {
 			this.bend = MidiUtil.combineByteValue(dataBytes[1], dataBytes[0]);
+		}
+		messageLength() {
+			return 2;
 		}
 	},
 	System: class extends MessageData {
@@ -137,6 +172,7 @@ class MidiChannel {
 
 	_addNote(note, velocity = 0) {
 		velocity <= 0 ? this._removeNote(note) : this.notes[note] = velocity;
+		console.log("process")
 	}
 	_removeNote(note) {
 		delete this.notes[note];
@@ -177,8 +213,8 @@ class MidiSystem {
 		}
 	}
 
-	process(messageDataBytes) {
-		var midiMessage = new MidiMessage(messageDataBytes, this.runningStatus);
+	process(byteValues) {
+		var midiMessage = new MidiMessage(byteValues, this.runningStatus);
 		this.runningStatus = midiMessage.status || this.runningStatus;
 
 		var midiChannel = this.channels[midiMessage.status.channel];

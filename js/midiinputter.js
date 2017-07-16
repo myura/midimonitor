@@ -28,6 +28,8 @@ class MidiDirectInputter extends MidiInputter{
 	}
 
 	_messageEventHandler(event) {
-		this.midiSystem.process(event.data);
+		var iterator = event.data[Symbol.iterator]();
+		//this.midiSystem.process(event.data);
+		this.midiSystem.process(iterator);
 	}
 }
