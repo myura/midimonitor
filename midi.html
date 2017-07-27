@@ -1,38 +1,41 @@
-<html>
+<!DOCTYPE html>
+<html manifest="application.manifest">
 	<head>
-		<script type="text/javascript" src="js/midimonitor.js"></script>
 		<link rel="stylesheet" href="css/midimonitor.css">
 
-		<script type="text/javascript" src="js/midiutil.js" defer></script>
-		<script type="text/javascript" src="js/midiplayer.js" defer></script>
-		<script type="text/javascript" src="js/midiinputter.js" defer></script>
-		<script type="text/javascript" src="js/midifilereader.js" defer></script>
-		<script type="text/javascript" src="js/midi.js" defer></script>
+		<script type="text/javascript" src="js/MIDIEvents/MIDIEvents.js"></script>
+		<script type="text/javascript" src="js/MIDIEvents/MIDIFile.js"></script>
+		<script type="text/javascript" src="js/MIDIEvents/MIDIPlayer.js"></script>
+
+		<script type="text/javascript" src="js/midimonitor.js"></script>
+		<script type="text/javascript" src="js/midimonitorinput.js"></script>
+		<script type="text/javascript" src="js/midimonitoroutput.js"></script>
+		<script type="text/javascript" src="js/midimonitorplayer.js"></script>
 	</head>
 	<body>
 		<canvas id='midimonitor'>
-			<script>
-				var midiMonitor = new MidiMonitor(this.document.getElementById('midimonitor'));
-				window.addEventListener('load', function() {
-					var player = new MidiDirectInputter(midiMonitor);
-				});
-			</script>
 		</canvas>
 		<script>
+			var midiMonitorMaster = new MidiMonitorMaster(this.document.getElementById('midimonitor'));
+			var midiMonitorOutput = new MidiMonitorScreenOutput(midiMonitorMaster);
+			window.addEventListener('load', function() {
+				var player = new MidiMonitorInput(midiMonitorOutput);
+			});
 			if(FileReader) {
 				function cancelEvent(e) {
 					e.stopPropagation();
 					e.preventDefault();
 					e.dataTransfer.dropEffect = 'link';
 				}
-
 				function dropEvent(e) {
 					cancelEvent(e);
 					for(var i = 0; i < e.dataTransfer.files.length; ++i) {
 						var file = e.dataTransfer.files[i];
 						var reader = new FileReader();
 						reader.onload = function(e) {
-							midiFileReader = new MidiFileReader(e.target.result);
+							let midiMonitorPlayer = new MidiMonitorPlayer(midiMonitorOutput);
+							midiMonitorPlayer.load(e.target.result);
+							midiMonitorPlayer.play();
 						};
 						reader.readAsArrayBuffer(file);
 					}
