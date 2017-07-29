@@ -1,14 +1,7 @@
-class MidiInputter {
-	
-}
-
-class MidiDirectInputter extends MidiInputter{
-	constructor(midiMonitor) {
-		super();
+class MidiMonitorInput {
+	constructor(midiMonitorOutput) {
+		this.midiMonitorOutput = midiMonitorOutput;
 		navigator.requestMIDIAccess().then(this._initSuccess.bind(this), this._initFailure.bind(this));
-		// this.midiPlayer = new MidiSoundPlayer();
-		this.midiPlayer = new MidiMonitorPlayer(midiMonitor);
-		this.midiSystem = new MidiSystem(this.midiPlayer);
 	}
 
 	_initSuccess(midiAccess) {
@@ -28,8 +21,10 @@ class MidiDirectInputter extends MidiInputter{
 	}
 
 	_messageEventHandler(event) {
-		var iterator = event.data[Symbol.iterator]();
-		//this.midiSystem.process(event.data);
-		this.midiSystem.process(iterator);
+		this.send(event.data);
+	}
+
+	send(data) {
+		this.midiMonitorOutput.send(data);
 	}
 }
