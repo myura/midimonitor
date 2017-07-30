@@ -15,18 +15,14 @@ class MidiMonitor {
 		return window.screen.height;
 	}
 
-	static minFrequency(fps = MidiMonitor.fps()) {
+	static minFrequency(fps) {
 		return fps;
 	}
-	static maxFrequency(fps = MidiMonitor.fps(), screenHeight = MidiMonitor.screenHeight()) {
+	static maxFrequency(fps, screenHeight) {
 		return fps * screenHeight / 2;
 	}
-	static frequency2Pixels(frequency, fps, screenHeight) {
+	static frequency2Pixels(frequency, fps = MidiMonitor.fps(), screenHeight = MidiMonitor.screenHeight()) {
 		return frequency <= 0 ? 0 : this.maxFrequency(fps, screenHeight) / frequency;
-	}
-
-	static frequency2Percent(frequency, fps, screenHeight) {
-		return frequency <= 0 ? 0 : this.maxFrequency(fps, screenHeight);	// TODO
 	}
 
 	static tone2Frequency(toneNumber, bendPercent = 0, bendScale = MidiMonitor.bendScale(), referenceFrequency = 440, referenceNumber = 69) {
@@ -35,10 +31,6 @@ class MidiMonitor {
 
 	static tone2Pixels(toneNumber, bendPercent, bendScale) {
 		return MidiMonitor.frequency2Pixels(MidiMonitor.tone2Frequency(toneNumber, bendPercent, bendScale));
-	}
-
-	static tone2Percent(toneNumber, bendPercent, bendScale) {
-		return MidiMonitor.frequency2Percent(MidiMonitor.tone2Frequency(toneNumber, bendPercent, bendScale));
 	}
 
 	static minVelocity() {
@@ -66,7 +58,6 @@ class MidiMonitor {
 
 	static toneBackgroundSizeString(toneNumber, bendPercent = 0, widthPercent = 1) {
 		return '' + (widthPercent * 100) + '% ' + MidiMonitor.tone2Pixels(toneNumber, bendPercent) + 'px';
-		//return '' + (widthPercent * 100) + '% ' + MidiMonitor.tone2Percent(toneNumber, bendPercent) + '%';
 	}
 	
 	static toneBackgroundImageString(alpha = 1) {
