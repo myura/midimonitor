@@ -40,7 +40,7 @@ class MidiMonitorScreenOutput extends MidiMonitorOutput{
 				console.warn("Unimplemented Event: PROGRAM_CHANGE");
 				break;
 			case MIDIEvents.EVENT_MIDI_CHANNEL_AFTERTOUCH:
-				this.midiMonitorController.setAftertouch((midiMonitorMessage.param1);
+				this.midiMonitorController.setAftertouch(midiMonitorMessage.param1);
 				break;
 			case MIDIEvents.EVENT_MIDI_PITCH_BEND:
 				this.midiMonitorController.setBend(midiMonitorMessage.param1, midiMonitorMessage.param2);
