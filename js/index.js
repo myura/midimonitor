@@ -1,32 +1,38 @@
-function onload() {
-	var midiMonitorScreenOutput = new MidiMonitorScreenOutput(new MidiMonitorMaster(this.document.getElementById('midimonitor')));
+class MidiMonitorInitializer {
+	constructor(canvas) {
+		this.canvas = canvas;
+		this.canvas.midiMonitorOutput = new MidiMonitorScreenOutput(new MidiMonitorController(this.canvas));
+	}
 
-	var midiMonitorOutput = midiMonitorScreenOutput;
+	initInputDirect() {
+		var player = new MidiMonitorInput(this.canvas.midiMonitorOutput);
+	}
 
-	window.addEventListener('load', function() {
-		var player = new MidiMonitorInput(midiMonitorOutput);
-	});
-	if(FileReader) {
-		function cancelEvent(e) {
-			e.stopPropagation();
-			e.preventDefault();
-			e.dataTransfer.dropEffect = 'link';
-		}
-		function dropEvent(e) {
-			cancelEvent(e);
-			for(var i = 0; i < e.dataTransfer.files.length; ++i) {
-				var file = e.dataTransfer.files[i];
-				var reader = new FileReader();
-				reader.onload = function(e) {
-					let midiMonitorPlayer = new MidiMonitorPlayer(midiMonitorOutput);
-					midiMonitorPlayer.load(e.target.result);
-					midiMonitorPlayer.play();
-				};
-				reader.readAsArrayBuffer(file);
+	initInputFile() {
+		if(FileReader) {
+			function cancelEvent(e) {
+				e.stopPropagation();
+				e.preventDefault();
+				e.dataTransfer.dropEffect = 'link';
 			}
+			function dropEvent(e) {
+				cancelEvent(e);
+				for(var i = 0; i < e.dataTransfer.files.length; ++i) {
+					var file = e.dataTransfer.files[i];
+					var reader = new FileReader();
+					reader.midiMonitorOutput = e.target.midiMonitorOutput;
+					reader.onload = function(e) {
+						let midiMonitorPlayer = new MidiMonitorPlayer(e.target.midiMonitorOutput);
+						midiMonitorPlayer.load(e.target.result);
+						midiMonitorPlayer.play();
+					};
+					reader.readAsArrayBuffer(file);
+				}
+			}
+
+			this.canvas.addEventListener('dragenter', cancelEvent, false);
+			this.canvas.addEventListener('dragover', cancelEvent, false);
+			this.canvas.addEventListener('drop', dropEvent, false);
 		}
-		document.body.addEventListener('dragenter', cancelEvent, false);
-		document.body.addEventListener('dragover', cancelEvent, false);
-		document.body.addEventListener('drop', dropEvent, false);
 	}
 }

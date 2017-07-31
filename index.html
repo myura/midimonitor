@@ -14,8 +14,16 @@
 		<script type="text/javascript" src="js/midimonitorplayer.js"></script>
 
 		<script type="text/javascript" src="js/index.js"></script>
+
+		<script type="text/javascript">
+			function init(canvas) {
+				var midiMonitorInitializer = new MidiMonitorInitializer(canvas);
+				midiMonitorInitializer.initInputDirect();
+				midiMonitorInitializer.initInputFile();
+			}
+		</script>
 	</head>
-	<body onload="onload()">
+	<body onload='init(self.midimonitor)'>
 		<canvas id='midimonitor'/>
 	</body>
 </html>

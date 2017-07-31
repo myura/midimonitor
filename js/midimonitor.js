@@ -94,7 +94,7 @@ class MidiMonitor {
 	}
 }
 
-class MidiMonitorMaster {
+class MidiMonitorController {
 	constructor(canvas) {
 		this.midiMonitor = new MidiMonitor(canvas);
 		this.tones = {};
@@ -104,19 +104,26 @@ class MidiMonitorMaster {
 		this.midiMonitor.setTones(this.tones, this.bendPercent);
 	}
 
-	addTone(toneNumber, velocity) {
+	addTone(toneParam, velocityParam) {
+		var toneNumber = toneParam;
+		var velocity = velocityParam;
 		this.tones[toneNumber] = velocity;
 		this.render();
 	}
 
-	changeTone(toneNumber, velocity) {
-		this.tones[toneNumber] = velocity;
-		this.render();
-	}
-
-	removeTone(toneNumber, velocity) {
+	removeTone(toneParam, velocityParam) {
+		var toneNumber = toneParam;
+		var velocity = velocityParam;
 		delete this.tones[toneNumber];
 		this.render();
+	}
+
+	setToneAftertouch(toneParam, aftertouchParam) {
+		console.warn("Unimplemented Controller: NOTE_AFTERTOUCH");
+	}
+
+	setAftertouch(aftertouchParam) {
+		console.warn("Unimplemented Controller: CHANNEL_AFTERTOUCH");
 	}
 
 	setBend(bendParam1, bendParam2) {

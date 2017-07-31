@@ -17,21 +17,21 @@ class MidiMonitorOutput {
 }
 
 class MidiMonitorScreenOutput extends MidiMonitorOutput{
-	constructor(midiMonitorMaster) {
+	constructor(midiMonitorController) {
 		super();
-		this.midiMonitorMaster = midiMonitorMaster;
+		this.midiMonitorController = midiMonitorController;
 	}
 
 	_send(midiMonitorMessage) {
 		switch (midiMonitorMessage.type) {
 			case MIDIEvents.EVENT_MIDI_NOTE_OFF:
-				this.midiMonitorMaster.removeTone(midiMonitorMessage.param1, midiMonitorMessage.param2)
+				this.midiMonitorController.removeTone(midiMonitorMessage.param1, midiMonitorMessage.param2);
 				break;
 			case MIDIEvents.EVENT_MIDI_NOTE_ON:
-				this.midiMonitorMaster.addTone(midiMonitorMessage.param1, midiMonitorMessage.param2)
+				this.midiMonitorController.addTone(midiMonitorMessage.param1, midiMonitorMessage.param2);
 				break;
 			case MIDIEvents.EVENT_MIDI_NOTE_AFTERTOUCH:
-				console.warn("Unimplemented Event: NOTE_AFTERTOUCH");
+				this.midiMonitorController.setToneAftertouch(midiMonitorMessage.param1, midiMonitorMessage.param2);
 				break;
 			case MIDIEvents.EVENT_MIDI_CONTROLLER:
 				console.warn("Unimplemented Event: CONTROLLER");
@@ -40,10 +40,10 @@ class MidiMonitorScreenOutput extends MidiMonitorOutput{
 				console.warn("Unimplemented Event: PROGRAM_CHANGE");
 				break;
 			case MIDIEvents.EVENT_MIDI_CHANNEL_AFTERTOUCH:
-				console.warn("Unimplemented Event: CHANNEL_AFTERTOUCH");
+				this.midiMonitorController.setAftertouch((midiMonitorMessage.param1);
 				break;
 			case MIDIEvents.EVENT_MIDI_PITCH_BEND:
-				this.midiMonitorMaster.setBend(midiMonitorMessage.param1, midiMonitorMessage.param2);
+				this.midiMonitorController.setBend(midiMonitorMessage.param1, midiMonitorMessage.param2);
 				break;
 			default:
 				console.warn("Unimplemented Event: SYSTEM");
