@@ -57,7 +57,9 @@ class MidiMonitor {
 	}
 
 	static toneBackgroundSizeString(toneNumber, bendPercent = 0, widthPercent = 1) {
-		return '' + (widthPercent * 100) + '% ' + MidiMonitor.tone2Pixels(toneNumber, bendPercent) + 'px';
+		var widthStr = '' + (widthPercent * 100) + '%';
+		var heightStr = '' + MidiMonitor.tone2Pixels(toneNumber, bendPercent) + 'px';
+		return widthStr + ' ' + heightStr;
 	}
 	
 	static toneBackgroundImageString(alpha = 1) {
@@ -81,7 +83,11 @@ class MidiMonitor {
 		var length = Object.keys(tones).length
 		var percent = 1 / length;
 
+		var i = 0;
 		for (let toneNumber in tones) {
+			i++;
+			percent = i / length;
+
 			toneNumber = parseInt(toneNumber);
 			let toneVelocity = tones[toneNumber];
 
