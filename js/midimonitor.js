@@ -56,6 +56,10 @@ class MidiMonitor {
 		return 0;
 	}
 
+	static aftertouchPercent(aftertouchRaw) {
+		return MidiMonitor.velocity2Opacity(velocity);
+	}
+
 	static toneBackgroundSizeString(toneNumber, bendPercent = 0, widthPercent = 1) {
 		var widthStr = '' + (widthPercent * 100) + '%';
 		var heightStr = '' + MidiMonitor.tone2Pixels(toneNumber, bendPercent) + 'px';
@@ -76,7 +80,7 @@ class MidiMonitor {
 		this.canvas.opacity = MidiMonitor.velocity2Opacity(velocity);
 	}
 
-	setTones(tones, bendPercent = 0) {
+	setTones(tones, bendPercent = 0, aftertouchPercent = null) {
 		var backgroundSizeArray = [];
 		var backgroundImageArray = [];
 
@@ -97,6 +101,10 @@ class MidiMonitor {
 
 		this.canvas.style.backgroundSize = backgroundSizeArray.join(',');
 		this.canvas.style.backgroundImage = backgroundImageArray.join(',');
+
+		if (aftertouchPercent) {
+			this.canvas.opacity = aftertouchPercent;
+		}
 	}
 }
 
@@ -129,7 +137,8 @@ class MidiMonitorController {
 	}
 
 	setAftertouch(aftertouchParam) {
-		console.warn("Unimplemented Controller: CHANNEL_AFTERTOUCH");
+		this.aftertouchPercent = MidiMonitor.aftertouchPercent(aftertouchParam);
+		this.render();
 	}
 
 	setBend(bendParam1, bendParam2) {
