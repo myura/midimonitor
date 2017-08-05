@@ -2,6 +2,7 @@
 <html>
 	<head>
 		<title>Control Panel</title>
+		<link rel="stylesheet" href="css/index.css">
 
 		<script type="text/javascript" src="js/MIDIEvents/MIDIEvents.js"></script>
 		<script type="text/javascript" src="js/MIDIEvents/MIDIFile.js"></script>
@@ -45,13 +46,15 @@
 			function initCanvas(canvas) {
 				var midiMonitorInitializer = new MidiMonitorInitializer(canvas);
 				midiMonitorInitializer.initInputDirect();
-				midiMonitorInitializer.initInputFile(window2.document.body);
+				midiMonitorInitializer.initInputFileInput(window.fileinput);
 			}
 
 		</script>
 	</head>
 	<body onload='init()'>
-		<h1>MidiMonitor Control Panel</h1>
-		<a href="https://www.google.com">google</a>		
+		<h1 id="title">MidiMonitor Control Panel</h1>
+		<div id="controlpanel">
+			<input id="fileinput" type="file" accept="audio/mid">
+		</div>
 	</body>
 </html>
