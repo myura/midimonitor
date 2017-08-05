@@ -16,6 +16,8 @@
 		<script type="text/javascript" src="js/midimonitorinitializer.js"></script>
 
 		<script type="text/javascript">
+			var debug = 1;
+
 			function init() {
 				var sizeRatio = (2 / 3);
 				var midiMonitorSpecsObject = {
@@ -38,6 +40,12 @@
 						return arr.join('=');
 					}
 				).join(',');
+
+				if(debug) {
+					var iframe = document.createElement("iframe");
+					iframe.setAttribute('name', midiMonitorName);
+					document.body.appendChild(iframe);
+				}
 
 				return window.open(midiMonitorUrl, midiMonitorName, midiMonitorSpecs);
 			}
