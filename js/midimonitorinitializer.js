@@ -8,7 +8,12 @@ class MidiMonitorInitializer {
 		var player = new MidiMonitorInput(this.canvas.midiMonitorOutput);
 	}
 
-	initInputFile() {
+	initInputFile(dragoverElement) {
+		console.log(dragoverElement);
+		if(!dragoverElement) {
+			dragoverElement = this.canvas;
+		}
+		console.log('2nd:', dragoverElement);
 		if(FileReader) {
 			function cancelEvent(e) {
 				e.stopPropagation();
@@ -30,9 +35,9 @@ class MidiMonitorInitializer {
 				}
 			}
 
-			this.canvas.addEventListener('dragenter', cancelEvent, false);
-			this.canvas.addEventListener('dragover', cancelEvent, false);
-			this.canvas.addEventListener('drop', dropEvent, false);
+			dragoverElement.addEventListener('dragenter', cancelEvent, false);
+			dragoverElement.addEventListener('dragover', cancelEvent, false);
+			dragoverElement.addEventListener('drop', dropEvent, false);
 		}
 	}
 }

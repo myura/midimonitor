@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<link rel="stylesheet" href="css/midimonitor.css">
-
 		<script type="text/javascript" src="js/MIDIEvents/MIDIEvents.js"></script>
 		<script type="text/javascript" src="js/MIDIEvents/MIDIFile.js"></script>
 		<script type="text/javascript" src="js/MIDIEvents/MIDIPlayer.js"></script>
@@ -14,17 +12,14 @@
 		<script type="text/javascript" src="js/midimonitorplayer.js"></script>
 		<script type="text/javascript" src="js/midimonitorinitializer.js"></script>
 
-		<script type="text/javascript">
-			function init(canvas) {
-				var window2 = window.open('control.html', 'HerpDerp', 'titlebar=no, menubar=no, location=no, status=no, height=500px, width=500px, top=100px, left=100px, ');
-				console.log(window2.document);
-				var midiMonitorInitializer = new MidiMonitorInitializer(canvas);
-				midiMonitorInitializer.initInputDirect();
-				midiMonitorInitializer.initInputFile(window2.document.body);
-			}
-		</script>
+		
 	</head>
-	<body onload='init(self.midimonitor)'>
-		<canvas id='midimonitor'/>
+	<body>
+		<h1>MidiMonitor Control Panel</h1>
+		<a href="https://www.google.com">google</a>
+
+		<script type="text/javascript">
+			console.log(window.opener.document)
+		</script>
 	</body>
 </html>
