@@ -1,28 +1,80 @@
-body {
-	width: 100%;
+* {
+	border-width:		2px;
+	border-color:		silver;
+	border-radius:		5px;
+
+	font-family:		sans-serif;
+}
+
+html {
+	width:100%;
 	height: 100%;
 
-	padding: 0;
-	border: 0;
-	margin: 0;
-	/*overflow: hidden;*/
-
-	background-color: pink;
+	background-image:	repeating-linear-gradient(
+		-45deg,
+		silver,
+		silver 10px,
+		lightgray 10px,
+		lightgray 20px
+	);
 }
 
 #title {
+	text-align:			center;
 }
-#controlpanel {
-	/*width: 100%;
-	height: 100%;*/
 
-	background-color: green;
+fieldset, legend {
+	background-color:	white;
+	border-style:		groove;
 }
-#fileinput {
-	/*display: block;*/
-	/*width: 100%;*/
-	height: 100px;
-	width: 50%;
 
-	background-color: red;
+fieldset {
+	margin:				1em;
+}
+legend {
+	font-weight:		bold;
+}
+
+#fileinputlabel, #fileinputlabel input[type=file] {
+	cursor:				pointer;
+}
+
+#fileinputlabel {
+	position:			relative;
+	width:				100%;
+	height:				3em;
+
+	background-color:	silver;
+	border-style:		groove;
+}
+
+input[type=file] {
+	position:			absolute;
+	left:				50%;
+	top: 				50%;
+	transform:			translate(-50%, -50%);
+
+	background-color:	white;
+	border-style:		groove;
+
+	font-size:			large;
+}
+
+label, input[type=submit] {
+	float:				left;
+	clear:				left;
+	text-align:			right;
+}
+label {
+	margin-top:			1ex;
+	margin-bottom:		1ex;
+}
+input[type=submit] {
+	margin-top:			1ex;
+}
+
+iframe {
+	width:				100%;
+	height:				50%;
+	resize: 			vertical;
 }
