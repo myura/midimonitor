@@ -1,4 +1,21 @@
 class MidiMonitor {
+	static toneAlphaConstant(number, totalNumber) {
+		return 1 / totalNumber;
+	}
+
+	static toneAlphaLinear(number, totalNumber) {
+		return number / totalNumber;
+	}
+
+	static toneAlpha(number, totalNumber) {
+		return MidiMonitor.toneAlphaFunction ?  MidiMonitor.toneAlphaFunction(number, totalNumber) : MidiMonitor.toneAlphaLinear(number, totalNumber);
+	}
+
+
+	static imageScale() {
+		return MidiMonitor.imageScaleValue || 10;
+	}
+
 	static noteOffset() {
 		return MidiMonitor.noteOffsetValue || 12;
 	}
@@ -60,16 +77,29 @@ class MidiMonitor {
 		return MidiMonitor.velocity2Opacity(velocity);
 	}
 
-	static toneBackgroundSizeString(toneNumber, bendPercent, widthPercent = 1.0) {
+	static toneBackgroundSizeString(toneNumber, bendPercent, widthPercent = 1.0, imageScale = MidiMonitor.imageScale()) {
 		var widthStr = '' + (widthPercent * 100) + '%';
-		var heightStr = '' + MidiMonitor.tone2Pixels(toneNumber, bendPercent) + 'px';
+		var heightStr = '' + (MidiMonitor.tone2Pixels(toneNumber, bendPercent) * imageScale) + 'px';
 		return widthStr + ' ' + heightStr;
 	}
 	
-	static toneBackgroundImageString(alpha = 1) {
-		var black = 'hsla(0, 0%, 0%, ' + alpha + ')';
-		var white = 'hsla(0, 0%, 100%, ' + alpha + ')';
-		return 'linear-gradient(to bottom, ' + black + ', ' + black + ' 50%, ' + white + ' 50%, ' + white + ')';
+	static toneBackgroundImageString(alpha = 1, imageScale = MidiMonitor.imageScale()) {
+		var black = 'hsla(0,0%,0%,' + alpha + ')';
+		var white = 'hsla(0,0%,100%,' + alpha + ')';
+
+		var gradientArray = ['to bottom'];
+		for(let i = 0; i < imageScale; i++) {
+			let percentLower = 100 * (i / imageScale);
+			let percentMiddle = 100 * ((i + 0.5) / imageScale);
+			let percentUpper = 100 * ((i + 1) / imageScale);
+			gradientArray.push(
+				black + ' ' + (percentLower == 0 ? '' : percentLower + '%'),
+				black + ' ' + percentMiddle + '%',
+				white + ' ' + percentMiddle + '%',
+				white + ' ' + (percentUpper == 100 ? '' : percentUpper + '%')
+			);
+		}
+		return 'linear-gradient(' + gradientArray.join(', ') + ')';
 	}
 
 	constructor(canvas) {
@@ -85,18 +115,18 @@ class MidiMonitor {
 		var backgroundImageArray = [];
 
 		var length = Object.keys(tones).length
-		var percent = 1 / length;
+		var alpha = 1 / length;
 
 		var i = 0;
 		for (let toneNumber in tones) {
 			i++;
-			percent = i / length;
+			let alpha = MidiMonitor.toneAlpha(i, length);
 
 			toneNumber = parseInt(toneNumber);
 			let toneVelocity = tones[toneNumber];
 
 			backgroundSizeArray.push(MidiMonitor.toneBackgroundSizeString(toneNumber, bendPercent));
-			backgroundImageArray.push(MidiMonitor.toneBackgroundImageString(percent));
+			backgroundImageArray.push(MidiMonitor.toneBackgroundImageString(alpha));
 		}
 
 		this.canvas.style.backgroundSize = backgroundSizeArray.join(',');

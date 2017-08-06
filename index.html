@@ -56,22 +56,33 @@
 				return window.open(midiMonitorUrl, midiMonitorName, midiMonitorSpecs);
 			}
 
-			function initConfig(form) {
-				function processForm(e) {
+			function initConfig(midiform, renderform) {
+				function processMidiForm(e) {
 					e.preventDefault();
 
 					MidiMonitor.noteOffsetValue = parseInt(e.target['noteoffset'].value);
 					MidiMonitor.bendScaleValue = parseInt(e.target['bendscale'].value);
+
+					return false;
+				}
+
+				function processRenderForm(e) {
+					e.preventDefault();
+
+					MidiMonitor.toneAlphaFunction = MidiMonitor[e.target['tonealpha'].value];
+					MidiMonitor.imageScaleValue = parseInt(e.target['imagescale'].value);
 					MidiMonitor.fpsValue = parseInt(e.target['fps'].value);
 
 					return false;
 				}
-				form.addEventListener("submit", processForm);
+
+				midiform.addEventListener("submit", processMidiForm);
+				renderform.addEventListener("submit", processRenderForm);
 			}
 
 			function init() {
 				initWindow();
-				initConfig(window.configuration);
+				initConfig(window.midiconfig, window.renderconfig);
 			}
 
 			function initCanvas(canvas) {
@@ -94,8 +105,8 @@
 				</label>
 			</fieldset>
 			<fieldset>
-				<legend>Configuration</legend>
-				<form id="configuration">
+				<legend>MIDI Configuration</legend>
+				<form id="midiconfig">
 					<label>
 						<span>Note Offset:</span>
 						<input name="noteoffset" type="number" value="12" step="1">
@@ -104,9 +115,26 @@
 						<span>Bend Scale:</span>
 						<input name="bendscale" type="number" value="2" step="1" min="0">
 					</label>
+					<input type="submit" value="Submit">
+				</form>
+			</fieldset>
+			<fieldset>
+				<legend>Render Configuration</legend>
+				<form id="renderconfig">
+					<label>
+						<span>Image Scale:</span>
+						<input name="imagescale" type="number" value="10" min="0">
+					</label>
+					<label>
+						<span>Tone Alpha:</span>
+						<select name="tonealpha">
+							<option value="toneAlphaConstant">Constant</option>
+							<option value="toneAlphaLinear" selected>Linear</option>
+						</select>
+					</label>
 					<label>
 						<span>FPS:</span>
-						<input disabled name="fps" type="number" value="60" step="1" min="0">
+						<input name="fps" type="number" value="60" step="1" min="0">
 					</label>
 					<input type="submit" value="Submit">
 				</form>
