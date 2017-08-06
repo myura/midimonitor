@@ -16,7 +16,12 @@
 		<script type="text/javascript" src="js/midimonitorinitializer.js"></script>
 
 		<script type="text/javascript">
-			var debug = 1;
+			function hasParam(param) {
+				return window.location.search.substring(1).split('&').map(function(currentValue) {
+					return currentValue.split('=')[0];
+				}).indexOf(param) >= 0;
+			}
+			var debug = hasParam('debug') || 0;
 
 			function initWindow() {
 				var sizeRatio = (2 / 3);
