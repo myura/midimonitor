@@ -1,14 +1,14 @@
 class MidiMonitor {
 	static noteOffset() {
-		return 12;
+		return MidiMonitor.noteOffsetValue || 12;
 	}
 
 	static bendScale() {
-		return 2;
+		return MidiMonitor.bendScaleValue || 2;
 	}
 
 	static fps() {
-		return 60;
+		return MidiMonitor.fpsValue || 60;
 	}
 
 	static screenHeight() {
@@ -60,7 +60,7 @@ class MidiMonitor {
 		return MidiMonitor.velocity2Opacity(velocity);
 	}
 
-	static toneBackgroundSizeString(toneNumber, bendPercent = 0, widthPercent = 1) {
+	static toneBackgroundSizeString(toneNumber, bendPercent, widthPercent = 1.0) {
 		var widthStr = '' + (widthPercent * 100) + '%';
 		var heightStr = '' + MidiMonitor.tone2Pixels(toneNumber, bendPercent) + 'px';
 		return widthStr + ' ' + heightStr;
@@ -80,7 +80,7 @@ class MidiMonitor {
 		this.canvas.opacity = MidiMonitor.velocity2Opacity(velocity);
 	}
 
-	setTones(tones, bendPercent = 0, aftertouchPercent = null) {
+	setTones(tones, bendPercent, aftertouchPercent = null) {
 		var backgroundSizeArray = [];
 		var backgroundImageArray = [];
 

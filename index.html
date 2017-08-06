@@ -18,7 +18,7 @@
 		<script type="text/javascript">
 			var debug = 1;
 
-			function init() {
+			function initWindow() {
 				var sizeRatio = (2 / 3);
 				var midiMonitorSpecsObject = {
 					fullscreen:	1,
@@ -44,12 +44,30 @@
 				if(debug) {
 					var iframe = document.createElement("iframe");
 					iframe.setAttribute('name', midiMonitorName);
+					iframe.setAttribute('allowfullscreen', '');
 					document.body.appendChild(iframe);
 				}
 
 				return window.open(midiMonitorUrl, midiMonitorName, midiMonitorSpecs);
 			}
 
+			function initConfig(form) {
+				function processForm(e) {
+					e.preventDefault();
+
+					MidiMonitor.noteOffsetValue = parseInt(e.target['noteoffset'].value);
+					MidiMonitor.bendScaleValue = parseInt(e.target['bendscale'].value);
+					MidiMonitor.fpsValue = parseInt(e.target['fps'].value);
+
+					return false;
+				}
+				form.addEventListener("submit", processForm);
+			}
+
+			function init() {
+				initWindow();
+				initConfig(window.configuration);
+			}
 
 			function initCanvas(canvas) {
 				var midiMonitorInitializer = new MidiMonitorInitializer(canvas);
@@ -60,9 +78,34 @@
 		</script>
 	</head>
 	<body onload='init()'>
-		<h1 id="title">MidiMonitor Control Panel</h1>
-		<div id="controlpanel">
-			<input id="fileinput" type="file" accept="audio/mid">
-		</div>
+		<header>
+			<h1 id="title">MidiMonitor Control Panel</h1>
+		</header>
+		<main id="controlpanel">
+			<fieldset>
+				<legend>File Playback</legend>
+				<label id="fileinputlabel">
+					<input id="fileinput" type="file" accept="audio/mid">
+				</label>
+			</fieldset>
+			<fieldset>
+				<legend>Configuration</legend>
+				<form id="configuration">
+					<label>
+						<span>Note Offset:</span>
+						<input name="noteoffset" type="number" value="12" step="1">
+					</label>
+					<label>
+						<span>Bend Scale:</span>
+						<input name="bendscale" type="number" value="2" step="1" min="0">
+					</label>
+					<label>
+						<span>FPS:</span>
+						<input disabled name="fps" type="number" value="60" step="1" min="0">
+					</label>
+					<input type="submit" value="Submit">
+				</form>
+			</fieldset>
+		</main>
 	</body>
 </html>
