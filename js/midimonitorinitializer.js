@@ -8,7 +8,6 @@ class MidiMonitorInitializer {
 		var player = new MidiMonitorInput(this.canvas.midiMonitorOutput);
 	}
 
-
 	static _cancelEvent(e) {
 		e.dataTransfer = e.dataTransfer || e.target;
 

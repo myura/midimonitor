@@ -17,7 +17,7 @@ class MidiMonitor {
 	}
 
 	static noteOffset() {
-		return MidiMonitor.noteOffsetValue || 12;
+		return MidiMonitor.noteOffsetValue == null ? MidiMonitor.noteOffsetValue : 12;
 	}
 
 	static bendScale() {

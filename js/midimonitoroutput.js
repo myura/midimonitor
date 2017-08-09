@@ -16,7 +16,7 @@ class MidiMonitorOutput {
 	}
 }
 
-class MidiMonitorScreenOutput extends MidiMonitorOutput{
+class MidiMonitorScreenOutput extends MidiMonitorOutput {
 	constructor(midiMonitorController) {
 		super();
 		this.midiMonitorController = midiMonitorController;
