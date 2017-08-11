@@ -91,6 +91,20 @@
 				midiMonitorInitializer.initInputFileInput(window.fileinput);
 			}
 
+			function initFullscreen(canvasDocument) {
+				var element = canvasDocument.documentElement;
+				canvasDocument.fullscreen = canvasDocument.fullscreen || function() { return canvasDocument.fullscreenElement || canvasDocument.webkitFullscreenElement || canvasDocument.mozFullScreenElement || canvasDocument.msFullscreenElement; };
+				element.requestFullscreen = element.requestFullscreen || element.webkitRequestFullscreen || element.mozRequestFullScreen || element.msRequestFullscreen;
+				canvasDocument.exitFullscreen = canvasDocument.exitFullscreen || canvasDocument.webkitExitFullscreen || canvasDocument.mozCancelFullScreen || canvasDocument.msExitFullscreen;
+
+				function processFullscreenForm(e) {
+					e.preventDefault();
+					canvasDocument.fullscreen() ? canvasDocument.exitFullscreen() : canvasDocument.documentElement.requestFullscreen();
+				}
+
+				window.renderfullscreen.addEventListener("submit", processFullscreenForm);
+			}
+
 		</script>
 	</head>
 	<body onload='init()'>
@@ -120,6 +134,9 @@
 			</fieldset>
 			<fieldset>
 				<legend>Render Configuration</legend>
+				<form id="renderfullscreen">
+					<input type="submit" value="Fullscreen">
+				</form>
 				<form id="renderconfig">
 					<label>
 						<span>Image Scale:</span>

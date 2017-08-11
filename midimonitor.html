@@ -17,10 +17,10 @@
 				}
 
 				function initCanvas(canvas) {
+					window.opener.initFullscreen(this.document);
 					window.opener.initCanvas(canvas);
 				}
 
-				initFullscreen(document.documentElement);
 				initCanvas(canvas);
 			}
 		</script>
