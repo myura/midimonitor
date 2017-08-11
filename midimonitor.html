@@ -6,22 +6,8 @@
 
 		<script type="text/javascript">
 			function init(canvas) {
-				function initFullscreen(element) {
-					document.fullscreen = document.fullscreen || function() { return document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement; };
-					element.requestFullscreen = element.requestFullscreen || element.webkitRequestFullscreen || element.mozRequestFullScreen || element.msRequestFullscreen;
-					document.exitFullscreen = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
-
-					element.addEventListener("click", function(e) {
-						document.fullscreen() ? document.exitFullscreen() : e.currentTarget.requestFullscreen()
-					});
-				}
-
-				function initCanvas(canvas) {
-					window.opener.initFullscreen(this.document);
-					window.opener.initCanvas(canvas);
-				}
-
-				initCanvas(canvas);
+				window.opener.initFullscreen(this.document);
+				window.opener.initCanvas(canvas);
 			}
 		</script>
 	</head>

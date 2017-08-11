@@ -102,6 +102,7 @@
 					canvasDocument.fullscreen() ? canvasDocument.exitFullscreen() : canvasDocument.documentElement.requestFullscreen();
 				}
 
+				canvasDocument.addEventListener("dblclick", processFullscreenForm);
 				window.renderfullscreen.addEventListener("submit", processFullscreenForm);
 			}
 
